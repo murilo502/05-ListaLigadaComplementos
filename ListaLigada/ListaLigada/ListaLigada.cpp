@@ -8,6 +8,7 @@ struct NO {
 };
 
 NO* primeiro = NULL;
+NO* ultimo = NULL; // Adicionado ponteiro para o último elemento
 
 // headers
 void menu();
@@ -70,7 +71,7 @@ void menu()
 void inicializar()
 {
 	// se a lista já possuir elementos
-// libera a memoria ocupada
+	// libera a memoria ocupada
 	NO* aux = primeiro;
 	while (aux != NULL) {
 		NO* paraExcluir = aux;
@@ -79,8 +80,8 @@ void inicializar()
 	}
 
 	primeiro = NULL;
+	ultimo = NULL; // Resetando o ponteiro ultimo
 	cout << "Lista inicializada \n";
-
 }
 
 void exibirQuantidadeElementos() {
@@ -117,6 +118,7 @@ void inserirElemento()
 	NO* novo = (NO*)malloc(sizeof(NO));
 	if (novo == NULL)
 	{
+		cout << "Erro de alocacao de memoria!\n";
 		return;
 	}
 
@@ -127,26 +129,84 @@ void inserirElemento()
 	if (primeiro == NULL)
 	{
 		primeiro = novo;
+		ultimo = novo;
 	}
 	else
 	{
 		// procura o final da lista
-		NO* aux = primeiro;
-		while (aux->prox != NULL) {
-			aux = aux->prox;
-		}
-		aux->prox = novo;
+
+		ultimo->prox = novo;
+		ultimo = novo;
 	}
+
+	cout << "Elemento inserido com sucesso!\n";
 }
 
 void excluirElemento()
 {
+	if (primeiro == NULL) {
+		cout << "Lista vazia, nao ha elementos para excluir!\n";
+		return;
+	}
 
+	int valor;
+	cout << "Digite o elemento a ser excluido: ";
+	cin >> valor;
+
+	NO* atual = primeiro;
+	NO* anterior = NULL;
+
+	while (atual != NULL && atual->valor != valor) {
+		anterior = atual;
+		atual = atual->prox;
+	}
+
+	if (atual == NULL) {
+		cout << "Elemento nao encontrado!\n";
+		return;
+	}
+
+	if (anterior == NULL) {
+		primeiro = atual->prox;
+
+		if (primeiro == NULL) {
+			ultimo = NULL;
+		}
+	}
+	else {
+		anterior->prox = atual->prox;
+
+		if (atual == ultimo) {
+			ultimo = anterior;
+		}
+	}
+
+	free(atual);
+	cout << "Elemento excluido com sucesso!\n";
 }
 
 void buscarElemento()
 {
+	if (primeiro == NULL) {
+		cout << "Lista vazia!\n";
+		return;
+	}
 
+	int valor;
+	cout << "Digite o elemento a ser buscado: ";
+	cin >> valor;
+
+	NO* aux = primeiro;
+	int posicao = 1;
+
+	while (aux != NULL) {
+		if (aux->valor == valor) {
+			cout << "Elemento " << valor << " encontrado na posicao " << posicao << "!\n";
+			return;
+		}
+		aux = aux->prox;
+		posicao++;
+	}
+
+	cout << "Elemento " << valor << " nao encontrado na lista!\n";
 }
-
-
